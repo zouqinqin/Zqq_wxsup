@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="layout :: htmlhead" th:with="title='二维码列表'"></head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <!--头-->
+    <div th:replace="fragments/head :: header"></div>
+
+    <div class="layui-body" style="margin: 1%">
+
+        <form id="qrCodeSearch" class="layui-form layui-form-pane" method="post" action="" style="margin-top: 20px;">
+            <div class="layui-form-item">
+                <label class="layui-form-label">任务ID</label>
+                <div class="layui-input-inline">
+                    <input id="taskId" name="taskId" autocomplete="off" class="layui-input" type="text"/>
+                </div>
+                <!--二维码任务状态复选框-->
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-inline">
+                    <select name="status" lay-search="">
+                        <option value="">全部</option>
+                        <option value="1">新上传</option>
+                        <option value="2">进行中</option>
+                        <option value="3">已过期</option>
+                        <option value="4">已删除</option>
+                        <option value="5">失败</option>
+                        <option value="6">辅助成功</option>
+                        <option value="7">确认成功</option>
+                    </select>
+                </div>
+                <!--客服介入状态复选框-->
+                <label class="layui-form-label">客服状态</label>
+                <div class="layui-input-inline">
+                    <select name="serverStatus" lay-search="">
+                        <option value="">全部</option>
+                        <option value="0">未介入</option>
+                        <option value="1">已介入</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <!--任务创建时间选择区-->
+                    <label class="layui-form-label">创建时间</label>
+                    <div class="layui-input-inline" style="width: 175px;">
+                        <input  name="insertTimeStart" id="insertTimeStart" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" type="text"/>
+                    </div>
+                    <div class="layui-form-mid">-</div>
+                    <div class="layui-input-inline" style="width: 175px;">
+                        <input name="insertTimeEnd" id="insertTimeEnd" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" type="text"/>
+                    </div>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    <button class="layui-btn"  lay-submit="" lay-filter="searchSubmit">提交</button>
+                </div>
+            </div>
+        </form>
+        <hr class="layui-bg-black"/>
+
+        <table id="qrCode" lay-filter="qrCodeTable"></table>
+        <!--任务状态（二维码状态）-->
+        <script type="text/html" id="staTpl">
+            {{#  if(d.qrStatus == '1'){ }}
+                新上传
+            {{#  } else if(d.qrStatus == '2') { }}
+                进行中
+            {{#  } else if(d.qrStatus == '3') { }}
+                已过期
+            {{#  } else if(d.qrStatus == '4') { }}
+                已删除
+            {{#  } else if(d.qrStatus == '5') { }}
+                失败
+            {{#  } else if(d.qrStatus == '6') { }}
+                辅助成功
+            {{#  } else if(d.qrStatus == '7') { }}
+                确认成功
+            {{#  } }}
+        </script>
+        <!--客服状态-->
+        <script type="text/html" id="serTpl">
+            {{#  if(d.serverStatus == '1'){ }}
+                客服确认
+            {{#  } }}
+        </script>
+    </div>
+
+    <!--底部-->
+    <div th:replace="fragments/footer :: footer"></div>
+    <script src="/js/dateUtils.js"></script>
+    <script src="/js/task/qrCodeForChan.js"></script>
+
+</div>
+</body>
+</html>

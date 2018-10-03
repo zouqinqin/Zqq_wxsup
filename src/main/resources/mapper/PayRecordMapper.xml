@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wyait.manage.dao.PayRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.wyait.manage.pojo.PayRecord" >
+    <id column="recordNO" property="recordno" jdbcType="VARCHAR" />
+    <result column="userId" property="userid" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="payNum" property="paynum" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="createUser" property="createuser" jdbcType="VARCHAR" />
+    <result column="createTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="updateUser" property="updateuser" jdbcType="VARCHAR" />
+    <result column="updateTime" property="updatetime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from pay_record
+    where recordNO = #{recordno,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.wyait.manage.pojo.PayRecord" >
+    insert into pay_record (recordNO, userId, phone, 
+      name, payNum, remark, 
+      createUser, createTime, updateUser, 
+      updateTime)
+    values (#{recordno,jdbcType=VARCHAR}, #{userid,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
+      #{name,jdbcType=VARCHAR}, #{paynum,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, 
+      #{createuser,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, #{updateuser,jdbcType=VARCHAR}, 
+      #{updatetime,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.wyait.manage.pojo.PayRecord" >
+    update pay_record
+    set userId = #{userid,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      payNum = #{paynum,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR},
+      createUser = #{createuser,jdbcType=VARCHAR},
+      createTime = #{createtime,jdbcType=TIMESTAMP},
+      updateUser = #{updateuser,jdbcType=VARCHAR},
+      updateTime = #{updatetime,jdbcType=TIMESTAMP}
+    where recordNO = #{recordno,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select recordNO, userId, phone, name, payNum, remark, createUser, createTime, updateUser, 
+    updateTime
+    from pay_record
+    where recordNO = #{recordno,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select recordNO, userId, phone, name, payNum, remark, createUser, createTime, updateUser, 
+    updateTime
+    from pay_record
+  </select>
+
+  <!--=Start getRecordList 分页查询用户列表userSearch -->
+  <select id="getRecordList" resultType="com.wyait.manage.entity.PayRecordDTO">
+    select
+    recordNO, userId, phone, name, payNum, remark,
+    createUser,
+    createTime,updateUser,updateTime
+    from pay_record
+    <where>
+      <if test="payRecordSearch.umobile!=null and payRecordSearch.umobile!=''">
+        AND phone =#{payRecordSearch.umobile}
+      </if>
+      <if test="payRecordSearch.insertTimeStart!=null and payRecordSearch.insertTimeStart!=''">
+        AND createTime &gt;= #{payRecordSearch.insertTimeStart}
+      </if>
+      <if test="payRecordSearch.insertTimeEnd!=null and payRecordSearch.insertTimeEnd!=''">
+        AND createTime &lt;= #{payRecordSearch.insertTimeEnd}
+      </if>
+    </where>
+    ORDER BY createTime DESC
+  </select>
+  <!--=End getUsers 分页查询用户列表 -->
+</mapper>

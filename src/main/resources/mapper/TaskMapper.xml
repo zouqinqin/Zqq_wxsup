@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wyait.manage.dao.TaskMapper" >
+  <resultMap id="BaseResultMap" type="com.wyait.manage.pojo.Task" >
+    <id column="task_id" property="taskId" jdbcType="VARCHAR" />
+    <result column="sys_userId" property="sysUserid" jdbcType="VARCHAR" />
+    <result column="task_type" property="taskType" jdbcType="VARCHAR" />
+    <result column="createUser" property="createuser" jdbcType="VARCHAR" />
+    <result column="createTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="updateUser" property="updateuser" jdbcType="VARCHAR" />
+    <result column="updateTime" property="updatetime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from task
+    where task_id = #{taskId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.wyait.manage.pojo.Task" >
+    insert into task (task_id, sys_userId, task_type, 
+      createUser, createTime, updateUser, 
+      updateTime)
+    values (#{taskId,jdbcType=VARCHAR}, #{sysUserid,jdbcType=VARCHAR}, #{taskType,jdbcType=VARCHAR}, 
+      #{createuser,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, #{updateuser,jdbcType=VARCHAR}, 
+      #{updatetime,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.wyait.manage.pojo.Task" >
+    update task
+    set sys_userId = #{sysUserid,jdbcType=VARCHAR},
+      task_type = #{taskType,jdbcType=VARCHAR},
+      createUser = #{createuser,jdbcType=VARCHAR},
+      createTime = #{createtime,jdbcType=TIMESTAMP},
+      updateUser = #{updateuser,jdbcType=VARCHAR},
+      updateTime = #{updatetime,jdbcType=TIMESTAMP}
+    where task_id = #{taskId,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select task_id, sys_userId, task_type, createUser, createTime, updateUser, updateTime
+    from task
+    where task_id = #{taskId,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select task_id, sys_userId, task_type, createUser, createTime, updateUser, updateTime
+    from task
+  </select>
+</mapper>

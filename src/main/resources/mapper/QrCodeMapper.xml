@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wyait.manage.dao.QrCodeMapper" >
+  <resultMap id="BaseResultMap" type="com.wyait.manage.pojo.QrCode" >
+    <id column="qr_id" property="qrId" jdbcType="VARCHAR" />
+    <result column="taskId" property="taskId" jdbcType="VARCHAR" />
+    <result column="initiator" property="initiator" jdbcType="VARCHAR" />
+    <result column="qr_phone" property="qrPhone" jdbcType="VARCHAR" />
+    <result column="qr_url" property="qrUrl" jdbcType="VARCHAR" />
+    <result column="qr_name" property="qrName" jdbcType="VARCHAR" />
+    <result column="qr_status" property="qrStatus" jdbcType="VARCHAR" />
+    <result column="completer" property="completer" jdbcType="VARCHAR" />
+    <result column="complete_url" property="completeUrl" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="lock_time" property="lockTime" jdbcType="TIMESTAMP" />
+    <result column="complete_time" property="completeTime" jdbcType="TIMESTAMP" />
+    <result column="server_status" property="serverStatus" jdbcType="VARCHAR" />
+    <result column="createUser" property="createuser" jdbcType="VARCHAR" />
+    <result column="createTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="updateUser" property="updateuser" jdbcType="VARCHAR" />
+    <result column="updateTime" property="updatetime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from qr_code
+    where qr_id = #{qrId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.wyait.manage.pojo.QrCode" >
+    insert into qr_code (qr_id, initiator, qr_url, 
+      qr_name, qr_status, completer, 
+      complete_url, remark, lock_time, 
+      complete_time, server_status, createUser, 
+      createTime, updateUser, updateTime
+      )
+    values (#{qrId,jdbcType=VARCHAR}, #{initiator,jdbcType=VARCHAR}, #{qrUrl,jdbcType=VARCHAR}, 
+      #{qrName,jdbcType=VARCHAR}, #{qrStatus,jdbcType=VARCHAR}, #{completer,jdbcType=VARCHAR}, 
+      #{completeUrl,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{lockTime,jdbcType=TIMESTAMP}, 
+      #{completeTime,jdbcType=TIMESTAMP}, #{serverStatus,jdbcType=VARCHAR}, #{createuser,jdbcType=VARCHAR}, 
+      #{createtime,jdbcType=TIMESTAMP}, #{updateuser,jdbcType=VARCHAR}, #{updatetime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.wyait.manage.pojo.QrCode" >
+    update qr_code
+    set initiator = #{initiator,jdbcType=VARCHAR},
+      qr_url = #{qrUrl,jdbcType=VARCHAR},
+      qr_name = #{qrName,jdbcType=VARCHAR},
+      qr_status = #{qrStatus,jdbcType=VARCHAR},
+      completer = #{completer,jdbcType=VARCHAR},
+      complete_url = #{completeUrl,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      lock_time = #{lockTime,jdbcType=TIMESTAMP},
+      complete_time = #{completeTime,jdbcType=TIMESTAMP},
+      server_status = #{serverStatus,jdbcType=VARCHAR},
+      createUser = #{createuser,jdbcType=VARCHAR},
+      createTime = #{createtime,jdbcType=TIMESTAMP},
+      updateUser = #{updateuser,jdbcType=VARCHAR},
+      updateTime = #{updatetime,jdbcType=TIMESTAMP}
+    where qr_id = #{qrId,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select qr_id, initiator, qr_url, qr_name, qr_status, completer, complete_url, remark, 
+    lock_time, complete_time, server_status, createUser, createTime, updateUser, updateTime
+    from qr_code
+    where qr_id = #{qrId,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select qr_id, initiator, qr_url, qr_name, qr_status, completer, complete_url, remark, 
+    lock_time, complete_time, server_status, createUser, createTime, updateUser, updateTime
+    from qr_code
+  </select>
+
+  <!--=Start getRecordList 分页查询二维码任务列表userSearch -->
+  <select id="getQrCodeList" resultType="com.wyait.manage.entity.QrCodeDTO">
+    select
+    a.task_id,qr_id,initiator,qr_phone,
+    qr_url, qr_status, completer, complete_url, remark, lock_time,
+    complete_time,server_status,sup_phone,
+    b.createUser,
+    b.createTime,b.updateUser,b.updateTime
+    from task a
+    left join qr_code b on a.task_id=b.taskId
+    left join sup_user c on a.task_id=c.task_id
+    <where>
+      <if test="qrCodeSearch.taskId!=null and qrCodeSearch.taskId!=''">
+        AND a.task_id =#{qrCodeSearch.taskId}
+      </if>
+      <if test="qrCodeSearch.status!=null and qrCodeSearch.status!=''">
+        AND b.qr_status =#{qrCodeSearch.status}
+      </if>
+      <if test="qrCodeSearch.serverStatus!=null and qrCodeSearch.serverStatus!=''">
+        AND b.server_status =#{qrCodeSearch.serverStatus}
+      </if>
+      <if test="qrCodeSearch.insertTimeStart!=null and qrCodeSearch.insertTimeStart!=''">
+        AND b.createTime &gt;= #{qrCodeSearch.insertTimeStart}
+      </if>
+      <if test="qrCodeSearch.insertTimeEnd!=null and qrCodeSearch.insertTimeEnd!=''">
+        AND b.createTime &lt;= #{qrCodeSearch.insertTimeEnd}
+      </if>
+    </where>
+    ORDER BY b.createTime DESC
+  </select>
+  <!--=End getUsers 分页查询二维码任务列表 -->
+
+  <!--=Start getRecordList 分页查询二维码任务列表userSearch(注册方) -->
+  <select id="getQrCodeListForReg" resultType="com.wyait.manage.entity.QrCodeDTO">
+    select
+    taskId,
+    qr_status, remark, lock_time,
+    complete_time,server_status,createTime,
+    qr_phone,updateTime
+    from qr_code
+    <where>
+        AND initiator =#{qrCodeSearch.userId}
+      <if test="qrCodeSearch.taskId!=null and qrCodeSearch.taskId!=''">
+        AND taskId =#{qrCodeSearch.taskId}
+      </if>
+      <if test="qrCodeSearch.status!=null and qrCodeSearch.status!=''">
+        AND qr_status =#{qrCodeSearch.status}
+      </if>
+      <if test="qrCodeSearch.serverStatus!=null and qrCodeSearch.serverStatus!=''">
+        AND server_status =#{qrCodeSearch.serverStatus}
+      </if>
+      <if test="qrCodeSearch.insertTimeStart!=null and qrCodeSearch.insertTimeStart!=''">
+        AND createTime &gt;= #{qrCodeSearch.insertTimeStart}
+      </if>
+      <if test="qrCodeSearch.insertTimeEnd!=null and qrCodeSearch.insertTimeEnd!=''">
+        AND createTime &lt;= #{qrCodeSearch.insertTimeEnd}
+      </if>
+    </where>
+    ORDER BY createTime DESC
+  </select>
+  <!--=End getUsers 分页查询二维码任务列表 -->
+
+  <!--=Start getRecordList 分页查询二维码任务列表userSearch(注册方) -->
+  <select id="getQrCodeListForChan" resultType="com.wyait.manage.entity.QrCodeDTO">
+    select
+    taskId,
+    qr_status, remark, lock_time,
+    complete_time,server_status,createTime,updateTime
+    from qr_code
+    <where>
+        AND completer =#{qrCodeSearch.userId}
+      <if test="qrCodeSearch.taskId!=null and qrCodeSearch.taskId!=''">
+        AND taskId =#{qrCodeSearch.taskId}
+      </if>
+      <if test="qrCodeSearch.status!=null and qrCodeSearch.status!=''">
+        AND qr_status =#{qrCodeSearch.status}
+      </if>
+      <if test="qrCodeSearch.serverStatus!=null and qrCodeSearch.serverStatus!=''">
+        AND server_status =#{qrCodeSearch.serverStatus}
+      </if>
+      <if test="qrCodeSearch.insertTimeStart!=null and qrCodeSearch.insertTimeStart!=''">
+        AND createTime &gt;= #{qrCodeSearch.insertTimeStart}
+      </if>
+      <if test="qrCodeSearch.insertTimeEnd!=null and qrCodeSearch.insertTimeEnd!=''">
+        AND createTime &lt;= #{qrCodeSearch.insertTimeEnd}
+      </if>
+    </where>
+    ORDER BY createTime DESC
+  </select>
+  <!--=End getUsers 分页查询二维码任务列表 -->
+</mapper>
